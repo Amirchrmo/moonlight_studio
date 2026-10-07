@@ -28,7 +28,9 @@ CONTAINER="moonlight-nginx"
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
 
-SSH=(ssh -p "$PORT" -o ConnectTimeout=20 -o BatchMode=yes "$USER_@$HOST")
+# One multiplexed connection for the whole run (avoids SSH rate limits).
+SSH_OPTS="-p $PORT -o ConnectTimeout=20 -o BatchMode=yes -o ControlMaster=auto -o ControlPath=/tmp/ssh-moonlight-%r@%h:%p -o ControlPersist=120"
+SSH=(ssh $SSH_OPTS "$USER_@$HOST")
 remote() { "${SSH[@]}" "$@"; }
 step() { printf '\n\033[1;35m▸ %s\033[0m\n' "$*"; }
 fail() { printf '\n\033[1;31m✖ %s\033[0m\n' "$*" >&2; exit 1; }
@@ -78,7 +80,7 @@ npm run build
 
 step "Validate nginx config"
 remote "mkdir -p /tmp/moonlight-deploy"
-scp -q -P "$PORT" deploy/nginx/default.conf deploy/docker-compose.yml "$USER_@$HOST:/tmp/moonlight-deploy/"
+scp -q ${SSH_OPTS/-p /-P } deploy/nginx/default.conf deploy/docker-compose.yml "$USER_@$HOST:/tmp/moonlight-deploy/"
 remote "docker run --rm -v /tmp/moonlight-deploy/default.conf:/etc/nginx/conf.d/default.conf:ro nginx:1.27-alpine nginx -t -q" \
   || fail "nginx config test failed — nothing changed on the server"
 
@@ -87,7 +89,7 @@ remote "mkdir -p '$DIR/releases' '$DIR/acme' '$DIR/nginx' '$DIR/backups'"
 # Hard-link unchanged files (e.g. hashed images) from the current release: fast + small.
 LINK_DEST=()
 if remote "test -e '$DIR/releases/current'"; then LINK_DEST=(--link-dest="$DIR/releases/current/"); fi
-rsync -az --delete "${LINK_DEST[@]}" -e "ssh -p $PORT -o BatchMode=yes" dist/ "$USER_@$HOST:$DIR/releases/$REL/"
+rsync -az --delete "${LINK_DEST[@]}" -e "ssh $SSH_OPTS" dist/ "$USER_@$HOST:$DIR/releases/$REL/"
 remote "test -f '$DIR/releases/$REL/index.html'" || fail "Upload incomplete"
 
 step "Install config (previous copies → backups/)"
