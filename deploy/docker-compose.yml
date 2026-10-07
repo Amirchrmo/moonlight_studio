@@ -6,8 +6,12 @@ services:
     expose:
       - "80"
     volumes:
-      - ./web:/usr/share/nginx/html:ro
+      # releases/<id>/ = one build each; releases/current -> active release.
+      # The symlink is resolved per request, so switching it is an instant,
+      # atomic deploy/rollback with no container restart (see scripts/deploy.sh).
+      - ./releases:/srv/www:ro
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./acme:/var/www/acme:ro
     networks:
       - proxy-net
       - moonlight_internal

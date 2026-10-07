@@ -1,22 +1,44 @@
 /**
- * Premium black & white placeholder imagery.
+ * Image helpers backed by the generated manifest (see scripts/images.mjs).
  *
- * We use picsum.photos with the `grayscale` filter so every image renders as a
- * cinematic monochrome photograph. Curated photo IDs are chosen for mood and
- * composition. `img()` builds a responsive-friendly URL for any size.
+ * Images are referenced by their path inside the top-level `images/` folder,
+ * e.g. "portfolio/vows/01.jpg". Every image is pre-built into several widths,
+ * so components just pass `sizes` and the browser picks the best file.
  */
+import manifest from './image-manifest.json'
 
-const BASE = 'https://picsum.photos/id'
+const FALLBACK = { w: 1600, h: 1000, ph: '', srcs: {} }
 
-export function img(id, w, h, { grayscale = true, blur = 0 } = {}) {
-  const params = []
-  if (grayscale) params.push('grayscale')
-  if (blur) params.push(`blur=${blur}`)
-  const q = params.length ? `?${params.join('&')}` : ''
-  return `${BASE}/${id}/${Math.round(w)}/${Math.round(h)}${q}`
+/** Manifest entry for an image path (warns in dev if it doesn't exist). */
+export function getImage(src) {
+  const entry = manifest[src]
+  if (!entry && import.meta.env.DEV) console.warn(`[images] Unknown image "${src}" — add it to images/`)
+  return entry || FALLBACK
 }
 
-/** Build a srcSet across common widths for responsive loading. */
-export function srcSet(id, ratio = 1.5, widths = [640, 960, 1280, 1920]) {
-  return widths.map((w) => `${img(id, w, Math.round(w / ratio))} ${w}w`).join(', ')
+/** `srcset` string covering every generated width. */
+export function srcSet(src) {
+  const { srcs } = getImage(src)
+  return Object.entries(srcs)
+    .map(([w, url]) => `${url} ${w}w`)
+    .join(', ')
+}
+
+/** Single URL closest to (but not smaller than) the wanted width. */
+export function imgUrl(src, width = 1200) {
+  const { srcs } = getImage(src)
+  const widths = Object.keys(srcs).map(Number).sort((a, b) => a - b)
+  const w = widths.find((x) => x >= width) ?? widths.at(-1)
+  return srcs[w] ?? ''
+}
+
+/** Natural aspect ratio (width / height). */
+export function ratioOf(src) {
+  const { w, h } = getImage(src)
+  return w / h
+}
+
+/** Tiny inline blur placeholder (data URI). */
+export function placeholder(src) {
+  return getImage(src).ph
 }

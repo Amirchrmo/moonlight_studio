@@ -3,20 +3,23 @@ import { AnimatePresence, motion, LayoutGroup } from 'framer-motion'
 import Page from '../components/Page'
 import Media from '../components/Media'
 import Lightbox from '../components/Lightbox'
-import Reveal from '../components/Reveal'
+import Reveal from '../components/motion/Reveal'
+import LineReveal from '../components/motion/LineReveal'
+import { ease } from '../lib/motion'
 import content from '../content/pageContent'
 import './Portfolio.css'
 
-const ease = [0.22, 1, 0.36, 1]
 const { header, categories: CATEGORIES, projects: PROJECTS } = content.portfolio
 const uiPf = content.ui.portfolio
+const ALL = CATEGORIES[0]
+const countFor = (c) => (c === ALL ? PROJECTS.length : PROJECTS.filter((p) => p.category === c).length)
 
 export default function Portfolio() {
-  const [active, setActive] = useState('All')
+  const [active, setActive] = useState(ALL)
   const [open, setOpen] = useState(null)
 
   const list = useMemo(
-    () => (active === 'All' ? PROJECTS : PROJECTS.filter((p) => p.category === active)),
+    () => (active === ALL ? PROJECTS : PROJECTS.filter((p) => p.category === active)),
     [active]
   )
 
@@ -25,9 +28,13 @@ export default function Portfolio() {
       <header className="pf-head section">
         <div className="section-wide">
           <Reveal><p className="eyebrow">{header.eyebrow}</p></Reveal>
-          <Reveal as="h1" delay={0.05} className="pf-head__title display">
-            {header.title.line1}<br /><em>{header.title.emphasis}</em>
-          </Reveal>
+          <LineReveal
+            as="h1"
+            immediate
+            delay={0.25}
+            className="pf-head__title display"
+            lines={[header.title.line1, <em key="em">{header.title.emphasis}</em>]}
+          />
           <Reveal delay={0.12} className="pf-head__sub">
             {header.subtitle}
           </Reveal>
@@ -47,6 +54,7 @@ export default function Portfolio() {
             >
               {active === c && <motion.span layoutId="pf-pill" className="pf-filter__pill" transition={{ duration: 0.5, ease }} />}
               <span className="pf-filter__label">{c}</span>
+              <sup className="pf-filter__count">{countFor(c)}</sup>
             </button>
           ))}
         </div>
@@ -67,14 +75,14 @@ export default function Portfolio() {
                   transition={{ duration: 0.5, ease, delay: (i % 3) * 0.04 }}
                   className={`pf-item pf-item--${p.ratio < 1 ? 'portrait' : 'land'}`}
                   onClick={() => setOpen(p)}
+                  data-cursor={content.ui.cursor.open}
                   aria-label={`${uiPf.openGalleryPrefix} ${p.title} ${uiPf.openGallerySuffix}`}
                 >
                   <Media
-                    id={p.cover.src}
+                    src={p.cover.src}
                     ratio={p.ratio}
                     alt={p.cover.alt}
                     sizes="(max-width: 700px) 100vw, (max-width: 1100px) 50vw, 33vw"
-                    width={900}
                   />
                   <span className="pf-item__scrim" />
                   <span className="pf-item__meta">

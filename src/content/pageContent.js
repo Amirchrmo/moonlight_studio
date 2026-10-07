@@ -13,10 +13,11 @@
  *   آکولاد انتهایی است؛ باقی همه محتواست. هیچ کامپوننت React را لازم نیست ویرایش کنید.
  *
  * ▸ درباره‌ی تصاویر (مهم):
- *   تصاویر فعلی از سرویس نمونه‌ی «picsum» بارگذاری می‌شوند و مقدار "src" آن‌ها یک
- *   «کد عکس» (یک عدد) است، نه مسیر فایل. برای جایگزینی با عکس واقعی، کافی است این
- *   عدد را با کد عکس دلخواه عوض کنید. اگر خواستید از عکس‌های آپلودی خودتان استفاده
- *   کنید، به توسعه‌دهنده بگویید تا مسیر فایل (مثلاً "/images/hero.jpg") را جایگزین کند.
+ *   همه‌ی تصاویر فایل‌های ثابت داخل پوشه‌ی images/ در ریشه‌ی پروژه هستند. مقدار "src"
+ *   مسیر فایل نسبت به همان پوشه است؛ مثلاً "portfolio/vows/01.jpg" یعنی فایل
+ *   images/portfolio/vows/01.jpg. برای تعویض یک عکس، فایل جدید را در پوشه‌ی images/
+ *   بگذارید و مسیرش را این‌جا بنویسید (یا فایل قبلی را با همان نام جایگزین کنید).
+ *   نسخه‌های بهینه و واکنش‌گرا هنگام ساخت سایت به‌طور خودکار تولید می‌شوند.
  *   فیلد "alt" متن جایگزین تصویر برای دسترس‌پذیری و سئوست و باید توصیف کوتاه تصویر باشد.
  * ========================================================================== */
 
@@ -127,7 +128,7 @@ const content = {
     ariaLabel: "Introduction",
 
     // تصویر پس‌زمینه‌ی تمام‌صفحه‌ی هیرو؛ ابعاد پیشنهادی: 1920×1080 یا بزرگ‌تر
-    image: { src: 1027, alt: "A cinematic black and white portrait" },
+    image: { src: "site/hero.jpg", alt: "A cinematic black and white portrait" },
   },
 
   /* ---------------------------------------------------------------------------
@@ -140,11 +141,11 @@ const content = {
     viewAllButton: { label: "All projects", url: "/portfolio", openInNewTab: false },
     // اسلایدهای اسلایدر؛ هر آیتم یک تصویر تمام‌صفحه با عنوان و دسته‌بندی است
     items: [
-      { title: "Nocturne", category: "Portrait", image: { src: 1027, alt: "Nocturne — Portrait" } },
-      { title: "Objects of Desire", category: "Commercial", image: { src: 1080, alt: "Objects of Desire — Commercial" } },
-      { title: "Atelier Noir", category: "Fashion", image: { src: 64, alt: "Atelier Noir — Fashion" } },
-      { title: "First Light", category: "Wedding", image: { src: 1039, alt: "First Light — Wedding" } },
-      { title: "Two", category: "Couple", image: { src: 1062, alt: "Two — Couple" } },
+      { title: "Nocturne", category: "Portrait", image: { src: "site/hero.jpg", alt: "Nocturne — Portrait" } },
+      { title: "Objects of Desire", category: "Commercial", image: { src: "portfolio/objects-of-desire/01.jpg", alt: "Objects of Desire — Commercial" } },
+      { title: "Atelier Noir", category: "Fashion", image: { src: "portfolio/atelier-noir/01.jpg", alt: "Atelier Noir — Fashion" } },
+      { title: "First Light", category: "Wedding", image: { src: "portfolio/first-light/01.jpg", alt: "First Light — Wedding" } },
+      { title: "Two", category: "Couple", image: { src: "portfolio/two/01.jpg", alt: "Two — Couple" } },
     ],
   },
 
@@ -171,6 +172,8 @@ const content = {
     featured: {
       // تیتر بخش
       title: "Selected work",
+      // تعداد کارهای نمایش‌داده‌شده (از ابتدای فهرست نمونه‌کارها)
+      count: 4,
       // دکمه‌ی رفتن به صفحه‌ی کامل نمونه‌کارها
       button: { label: "Explore portfolio", url: "/portfolio", openInNewTab: false },
     },
@@ -215,7 +218,7 @@ const content = {
       // دکمه‌ی اصلی که به صفحه‌ی تماس می‌رود
       button: { label: "Get in touch", url: "/contact", openInNewTab: false },
       // تصویر پس‌زمینه‌ی این بخش؛ ابعاد پیشنهادی: 1920×800 (تصویر تیره)
-      image: { src: 341, alt: "Studio still life" },
+      image: { src: "site/cta.jpg", alt: "Studio still life" },
     },
   },
 
@@ -254,12 +257,12 @@ const content = {
         location: "Paris",
         blurb: "An editorial study of tailoring, shadow and stillness.",
         ratio: 0.8,
-        cover: { src: 64, alt: "Atelier Noir — Fashion" },
+        cover: { src: "portfolio/atelier-noir/01.jpg", alt: "Atelier Noir — Fashion" },
         gallery: [
-          { src: 64, alt: "Atelier Noir — image 1" },
-          { src: 65, alt: "Atelier Noir — image 2" },
-          { src: 66, alt: "Atelier Noir — image 3" },
-          { src: 68, alt: "Atelier Noir — image 4" },
+          { src: "portfolio/atelier-noir/01.jpg", alt: "Atelier Noir — image 1" },
+          { src: "portfolio/atelier-noir/02.jpg", alt: "Atelier Noir — image 2" },
+          { src: "portfolio/atelier-noir/03.jpg", alt: "Atelier Noir — image 3" },
+          { src: "portfolio/atelier-noir/04.jpg", alt: "Atelier Noir — image 4" },
         ],
       },
       {
@@ -270,12 +273,12 @@ const content = {
         location: "Tuscany",
         blurb: "A quiet ceremony captured between dawn and the hills.",
         ratio: 1.5,
-        cover: { src: 1039, alt: "First Light — Wedding" },
+        cover: { src: "portfolio/first-light/01.jpg", alt: "First Light — Wedding" },
         gallery: [
-          { src: 1039, alt: "First Light — image 1" },
-          { src: 1043, alt: "First Light — image 2" },
-          { src: 1050, alt: "First Light — image 3" },
-          { src: 1053, alt: "First Light — image 4" },
+          { src: "portfolio/first-light/01.jpg", alt: "First Light — image 1" },
+          { src: "portfolio/first-light/02.jpg", alt: "First Light — image 2" },
+          { src: "portfolio/first-light/03.jpg", alt: "First Light — image 3" },
+          { src: "portfolio/first-light/04.jpg", alt: "First Light — image 4" },
         ],
       },
       {
@@ -286,12 +289,12 @@ const content = {
         location: "New York",
         blurb: "Character portraiture for a modern house of design.",
         ratio: 0.8,
-        cover: { src: 1005, alt: "The Founder — Portrait" },
+        cover: { src: "portfolio/the-founder/01.jpg", alt: "The Founder — Portrait" },
         gallery: [
-          { src: 1005, alt: "The Founder — image 1" },
-          { src: 1011, alt: "The Founder — image 2" },
-          { src: 1012, alt: "The Founder — image 3" },
-          { src: 1025, alt: "The Founder — image 4" },
+          { src: "portfolio/the-founder/01.jpg", alt: "The Founder — image 1" },
+          { src: "portfolio/the-founder/02.jpg", alt: "The Founder — image 2" },
+          { src: "portfolio/the-founder/03.jpg", alt: "The Founder — image 3" },
+          { src: "portfolio/the-founder/04.jpg", alt: "The Founder — image 4" },
         ],
       },
       {
@@ -302,12 +305,12 @@ const content = {
         location: "Milan",
         blurb: "Product storytelling for a luxury fragrance launch.",
         ratio: 1.5,
-        cover: { src: 1080, alt: "Objects of Desire — Commercial" },
+        cover: { src: "portfolio/objects-of-desire/01.jpg", alt: "Objects of Desire — Commercial" },
         gallery: [
-          { src: 1080, alt: "Objects of Desire — image 1" },
-          { src: 1084, alt: "Objects of Desire — image 2" },
-          { src: 106, alt: "Objects of Desire — image 3" },
-          { src: 119, alt: "Objects of Desire — image 4" },
+          { src: "portfolio/objects-of-desire/01.jpg", alt: "Objects of Desire — image 1" },
+          { src: "portfolio/objects-of-desire/02.jpg", alt: "Objects of Desire — image 2" },
+          { src: "portfolio/objects-of-desire/03.jpg", alt: "Objects of Desire — image 3" },
+          { src: "portfolio/objects-of-desire/04.jpg", alt: "Objects of Desire — image 4" },
         ],
       },
       {
@@ -318,12 +321,12 @@ const content = {
         location: "Lisbon",
         blurb: "Intimacy, distance and the space between two people.",
         ratio: 1.5,
-        cover: { src: 1062, alt: "Two — Couple" },
+        cover: { src: "portfolio/two/01.jpg", alt: "Two — Couple" },
         gallery: [
-          { src: 1062, alt: "Two — image 1" },
-          { src: 1074, alt: "Two — image 2" },
-          { src: 177, alt: "Two — image 3" },
-          { src: 203, alt: "Two — image 4" },
+          { src: "portfolio/two/01.jpg", alt: "Two — image 1" },
+          { src: "portfolio/two/02.jpg", alt: "Two — image 2" },
+          { src: "portfolio/two/03.jpg", alt: "Two — image 3" },
+          { src: "portfolio/two/04.jpg", alt: "Two — image 4" },
         ],
       },
       {
@@ -334,12 +337,12 @@ const content = {
         location: "Copenhagen",
         blurb: "The unguarded honesty of childhood, in monochrome.",
         ratio: 0.8,
-        cover: { src: 1074, alt: "Small Hands — Kids" },
+        cover: { src: "portfolio/two/02.jpg", alt: "Small Hands — Kids" },
         gallery: [
-          { src: 1074, alt: "Small Hands — image 1" },
-          { src: 1069, alt: "Small Hands — image 2" },
-          { src: 1066, alt: "Small Hands — image 3" },
-          { src: 1084, alt: "Small Hands — image 4" },
+          { src: "portfolio/two/02.jpg", alt: "Small Hands — image 1" },
+          { src: "portfolio/small-hands/02.jpg", alt: "Small Hands — image 2" },
+          { src: "portfolio/small-hands/03.jpg", alt: "Small Hands — image 3" },
+          { src: "portfolio/objects-of-desire/02.jpg", alt: "Small Hands — image 4" },
         ],
       },
       {
@@ -350,12 +353,12 @@ const content = {
         location: "London",
         blurb: "A milestone celebration documented like a film.",
         ratio: 1.5,
-        cover: { src: 219, alt: "Golden Year — Birthday" },
+        cover: { src: "portfolio/golden-year/01.jpg", alt: "Golden Year — Birthday" },
         gallery: [
-          { src: 219, alt: "Golden Year — image 1" },
-          { src: 225, alt: "Golden Year — image 2" },
-          { src: 250, alt: "Golden Year — image 3" },
-          { src: 292, alt: "Golden Year — image 4" },
+          { src: "portfolio/golden-year/01.jpg", alt: "Golden Year — image 1" },
+          { src: "portfolio/golden-year/02.jpg", alt: "Golden Year — image 2" },
+          { src: "portfolio/golden-year/03.jpg", alt: "Golden Year — image 3" },
+          { src: "portfolio/golden-year/04.jpg", alt: "Golden Year — image 4" },
         ],
       },
       {
@@ -366,12 +369,12 @@ const content = {
         location: "Berlin",
         blurb: "Sculptural forms and the architecture of the body.",
         ratio: 0.8,
-        cover: { src: 338, alt: "Silhouette — Fashion" },
+        cover: { src: "portfolio/silhouette/01.jpg", alt: "Silhouette — Fashion" },
         gallery: [
-          { src: 338, alt: "Silhouette — image 1" },
-          { src: 342, alt: "Silhouette — image 2" },
-          { src: 349, alt: "Silhouette — image 3" },
-          { src: 351, alt: "Silhouette — image 4" },
+          { src: "portfolio/silhouette/01.jpg", alt: "Silhouette — image 1" },
+          { src: "portfolio/silhouette/02.jpg", alt: "Silhouette — image 2" },
+          { src: "portfolio/silhouette/03.jpg", alt: "Silhouette — image 3" },
+          { src: "portfolio/silhouette/04.jpg", alt: "Silhouette — image 4" },
         ],
       },
       {
@@ -382,12 +385,12 @@ const content = {
         location: "Tokyo",
         blurb: "A campaign built on reflection, light and restraint.",
         ratio: 1.5,
-        cover: { src: 366, alt: "House of Glass — Commercial" },
+        cover: { src: "portfolio/house-of-glass/01.jpg", alt: "House of Glass — Commercial" },
         gallery: [
-          { src: 366, alt: "House of Glass — image 1" },
-          { src: 370, alt: "House of Glass — image 2" },
-          { src: 374, alt: "House of Glass — image 3" },
-          { src: 375, alt: "House of Glass — image 4" },
+          { src: "portfolio/house-of-glass/01.jpg", alt: "House of Glass — image 1" },
+          { src: "portfolio/house-of-glass/02.jpg", alt: "House of Glass — image 2" },
+          { src: "portfolio/house-of-glass/03.jpg", alt: "House of Glass — image 3" },
+          { src: "portfolio/house-of-glass/04.jpg", alt: "House of Glass — image 4" },
         ],
       },
       {
@@ -398,12 +401,12 @@ const content = {
         location: "Santorini",
         blurb: "Two families, one horizon, and everything unsaid.",
         ratio: 0.8,
-        cover: { src: 431, alt: "Vows — Wedding" },
+        cover: { src: "portfolio/vows/01.jpg", alt: "Vows — Wedding" },
         gallery: [
-          { src: 431, alt: "Vows — image 1" },
-          { src: 447, alt: "Vows — image 2" },
-          { src: 453, alt: "Vows — image 3" },
-          { src: 459, alt: "Vows — image 4" },
+          { src: "portfolio/vows/01.jpg", alt: "Vows — image 1" },
+          { src: "portfolio/vows/02.jpg", alt: "Vows — image 2" },
+          { src: "portfolio/vows/03.jpg", alt: "Vows — image 3" },
+          { src: "portfolio/vows/04.jpg", alt: "Vows — image 4" },
         ],
       },
       {
@@ -414,12 +417,12 @@ const content = {
         location: "Vienna",
         blurb: "A single subject, studied across an afternoon.",
         ratio: 0.8,
-        cover: { src: 494, alt: "Her — Portrait" },
+        cover: { src: "portfolio/her/01.jpg", alt: "Her — Portrait" },
         gallery: [
-          { src: 494, alt: "Her — image 1" },
-          { src: 505, alt: "Her — image 2" },
-          { src: 513, alt: "Her — image 3" },
-          { src: 524, alt: "Her — image 4" },
+          { src: "portfolio/her/01.jpg", alt: "Her — image 1" },
+          { src: "portfolio/her/02.jpg", alt: "Her — image 2" },
+          { src: "portfolio/her/03.jpg", alt: "Her — image 3" },
+          { src: "portfolio/her/04.jpg", alt: "Her — image 4" },
         ],
       },
       {
@@ -430,12 +433,12 @@ const content = {
         location: "Oslo",
         blurb: "A love story told in glances rather than poses.",
         ratio: 1.5,
-        cover: { src: 628, alt: "The In-Between — Couple" },
+        cover: { src: "portfolio/the-in-between/01.jpg", alt: "The In-Between — Couple" },
         gallery: [
-          { src: 628, alt: "The In-Between — image 1" },
-          { src: 633, alt: "The In-Between — image 2" },
-          { src: 637, alt: "The In-Between — image 3" },
-          { src: 659, alt: "The In-Between — image 4" },
+          { src: "portfolio/the-in-between/01.jpg", alt: "The In-Between — image 1" },
+          { src: "portfolio/the-in-between/02.jpg", alt: "The In-Between — image 2" },
+          { src: "portfolio/the-in-between/03.jpg", alt: "The In-Between — image 3" },
+          { src: "portfolio/the-in-between/04.jpg", alt: "The In-Between — image 4" },
         ],
       },
     ],
@@ -452,7 +455,7 @@ const content = {
       title: { lead: "We are a small studio", beforeEmphasis: "with a ", emphasis: "long memory." },
     },
     // تصویر بزرگ عرضی زیر سربرگ؛ ابعاد پیشنهادی: 1920×870
-    heroImage: { src: 1027, alt: "The studio at work" },
+    heroImage: { src: "site/hero.jpg", alt: "The studio at work" },
 
     // بخش ۰۱ — داستان ما
     story: {
@@ -475,7 +478,7 @@ const content = {
       quote:
         "The best photographs are the ones you keep returning to, finding something new in the shadows each time.",
       // تصویر کنار متن چشم‌انداز
-      image: { src: 64, alt: "A vision in monochrome" },
+      image: { src: "portfolio/atelier-noir/01.jpg", alt: "A vision in monochrome" },
     },
 
     // بخش «چگونه کار می‌کنیم» — سه ارزش کلیدی
@@ -494,14 +497,14 @@ const content = {
       title: "Behind the Scenes",
       subtitle:
         "Long days, careful light, and the quiet choreography of a set. A glimpse at how the work actually gets made.",
-      // تصاویر پشت صحنه (گرید چیدمان خودکار). اولین تصویر عریض‌تر نمایش داده می‌شود.
+      // تصاویر پشت صحنه (گرید چیدمان خودکار؛ برخی خانه‌ها به‌صورت عریض و زیگزاگ چیده می‌شوند).
       images: [
-        { src: 1084, alt: "Behind the scenes" },
-        { src: 366, alt: "Behind the scenes" },
-        { src: 219, alt: "Behind the scenes" },
-        { src: 431, alt: "Behind the scenes" },
-        { src: 628, alt: "Behind the scenes" },
-        { src: 342, alt: "Behind the scenes" },
+        { src: "portfolio/objects-of-desire/02.jpg", alt: "Behind the scenes" },
+        { src: "portfolio/house-of-glass/01.jpg", alt: "Behind the scenes" },
+        { src: "portfolio/golden-year/01.jpg", alt: "Behind the scenes" },
+        { src: "portfolio/vows/01.jpg", alt: "Behind the scenes" },
+        { src: "portfolio/the-in-between/01.jpg", alt: "Behind the scenes" },
+        { src: "portfolio/silhouette/02.jpg", alt: "Behind the scenes" },
       ],
     },
 
@@ -511,10 +514,10 @@ const content = {
       title: "Meet the Studio",
       // اعضای تیم؛ برای هر نفر: نام، سمت و عکس پروفایل (نسبت ابعاد عمودی)
       members: [
-        { name: "Elias Moreau", role: "Founder · Director", image: { src: 1005, alt: "Elias Moreau" } },
-        { name: "Noor Haddad", role: "Lead Photographer", image: { src: 494, alt: "Noor Haddad" } },
-        { name: "Sena Okafor", role: "Creative Producer", image: { src: 338, alt: "Sena Okafor" } },
-        { name: "Ravi Kapoor", role: "Post & Color", image: { src: 1012, alt: "Ravi Kapoor" } },
+        { name: "Elias Moreau", role: "Founder · Director", image: { src: "portfolio/the-founder/01.jpg", alt: "Elias Moreau" } },
+        { name: "Noor Haddad", role: "Lead Photographer", image: { src: "portfolio/her/01.jpg", alt: "Noor Haddad" } },
+        { name: "Sena Okafor", role: "Creative Producer", image: { src: "portfolio/silhouette/01.jpg", alt: "Sena Okafor" } },
+        { name: "Ravi Kapoor", role: "Post & Color", image: { src: "portfolio/the-founder/03.jpg", alt: "Ravi Kapoor" } },
       ],
     },
   },
@@ -545,7 +548,7 @@ const content = {
     },
     // تصویر سینمایی کنار اطلاعات تماس + دو برچسب زیر آن
     visual: {
-      image: { src: 1027, alt: "Moonlight Studio" },
+      image: { src: "site/hero.jpg", alt: "Moonlight Studio" },
       captionLeft: "The studio",
       captionRight: "San Francisco",
     },
@@ -589,6 +592,9 @@ const content = {
       title: "Visit",
     },
 
+    // نوشته‌ی بزرگ متحرک بالای نوار پایینی فوتر
+    wordmark: "Moonlight Studio",
+
     // نوار پایینی فوتر
     base: {
       // متن کپی‌رایت؛ سال به‌صورت خودکار جلوی این متن اضافه می‌شود → «© 2026 Moonlight Studio»
@@ -597,6 +603,8 @@ const content = {
       mark: "Crafted under moonlight",
       // عبارت سمت چپ/راست
       tagline: "Photography · Direction · Story",
+      // دکمه‌ی «بازگشت به بالا» در گوشه‌ی نوار پایینی
+      backToTop: "Back to top",
     },
   },
 
@@ -629,6 +637,7 @@ const content = {
       goToPrefix: "Go to", // به‌همراه عنوان اسلاید ترکیب می‌شود، مثل: "Go to Nocturne"
       slidesAria: "Slides",
       roleDescription: "carousel", // توضیح نوع بخش برای صفحه‌خوان‌ها
+      dragLabel: "Drag", // برچسب دایره‌ای که هنگام هاور روی اسلایدر کنار نشانگر موس دیده می‌شود
     },
     // برچسب‌های دسترس‌پذیری صفحه‌ی نمونه‌کارها و گالری تمام‌صفحه (Lightbox)
     portfolio: {
@@ -637,6 +646,11 @@ const content = {
       openGallerySuffix: "gallery",
       // متن کوچکی که هنگام هاور روی هر کارت نمونه‌کار نمایش داده می‌شود
       viewGalleryLabel: "View gallery →",
+    },
+    // برچسب دایره‌ای که هنگام هاور روی کارت‌های نمونه‌کار کنار نشانگر موس نمایش داده می‌شود
+    cursor: {
+      view: "View",
+      open: "Open",
     },
     lightbox: {
       close: "Close gallery",

@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
-import { img } from '../data/images'
+import { imgUrl, srcSet } from '../data/images'
+import { ease } from '../lib/motion'
 import content from '../content/pageContent'
 import './PortfolioSlider.css'
 
 const DURATION = 6000
-const ease = [0.22, 1, 0.36, 1]
 const { slider, ui } = content
 const SLIDER = slider.items
 
@@ -53,7 +53,18 @@ export default function PortfolioSlider() {
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
-      <div className="slider__stage">
+      {/* Swipe / drag to change slides */}
+      <motion.div
+        className="slider__stage"
+        data-cursor={ui.slider.dragLabel}
+        drag="x"
+        dragConstraints={{ left: 0, right: 0 }}
+        dragElastic={0.12}
+        onDragEnd={(_, info) => {
+          if (info.offset.x < -60 || info.velocity.x < -400) next()
+          else if (info.offset.x > 60 || info.velocity.x > 400) prev()
+        }}
+      >
         <AnimatePresence initial={false} custom={dir} mode="popLayout">
           <motion.div
             key={active.image.src}
@@ -65,10 +76,11 @@ export default function PortfolioSlider() {
             transition={{ duration: 1.1, ease }}
           >
             <motion.img
-              src={img(active.image.src, 2000, 1200)}
-              srcSet={`${img(active.image.src, 1280, 768)} 1280w, ${img(active.image.src, 2000, 1200)} 2000w`}
+              src={imgUrl(active.image.src, 1920)}
+              srcSet={srcSet(active.image.src)}
               sizes="100vw"
               alt={active.image.alt}
+              draggable={false}
               loading="lazy"
               decoding="async"
               initial={{ scale: 1 }}
@@ -78,7 +90,7 @@ export default function PortfolioSlider() {
           </motion.div>
         </AnimatePresence>
         <div className="slider__scrim" />
-      </div>
+      </motion.div>
 
       {/* Overlay content */}
       <div className="slider__overlay">

@@ -1,5 +1,7 @@
 import { Link } from 'react-router-dom'
 import content from '../content/pageContent'
+import LineReveal from './motion/LineReveal'
+import Marquee from './motion/Marquee'
 import './Footer.css'
 
 const YEAR = new Date().getFullYear()
@@ -25,9 +27,10 @@ export default function Footer() {
       <div className="footer__top section-wide">
         <div className="footer__lead">
           <p className="eyebrow">{footer.eyebrow}</p>
-          <h2 className="footer__headline display">
-            {footer.headline.line1}<br />{footer.headline.line2}
-          </h2>
+          <LineReveal
+            className="footer__headline display"
+            lines={[footer.headline.line1, <em key="l2">{footer.headline.line2}</em>]}
+          />
         </div>
 
         <div className="footer__cols">
@@ -64,10 +67,17 @@ export default function Footer() {
         </div>
       </div>
 
+      <Marquee className="footer__wordmark display" text={`${footer.wordmark} · `} baseVelocity={-1.2} />
+
       <div className="footer__base section-wide">
         <span>© {YEAR} {footer.base.copyrightSuffix}</span>
         <span className="footer__base-mark">{footer.base.mark}</span>
-        <span>{footer.base.tagline}</span>
+        <span className="footer__base-end">
+          <span>{footer.base.tagline}</span>
+          <button className="footer__top-btn" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
+            {footer.base.backToTop} <span aria-hidden="true">↑</span>
+          </button>
+        </span>
       </div>
     </footer>
   )

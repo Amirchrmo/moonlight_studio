@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import { NavLink, Link, useLocation } from 'react-router-dom'
+import { motion } from 'framer-motion'
 import ThemeToggle from './ThemeToggle'
+import { INTRO_DELAY, ease } from '../lib/motion'
 import content from '../content/pageContent'
 import './Navbar.css'
 
@@ -8,11 +10,23 @@ const { navigation, site, ui } = content
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false)
+  const [hidden, setHidden] = useState(false)
   const [open, setOpen] = useState(false)
   const location = useLocation()
+  // Only the home page opens on a dark full-bleed hero that needs light nav text.
+  const overHero = location.pathname === '/'
 
+  // Solid bar once scrolled; tuck away while scrolling down, return on scroll up.
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40)
+    let lastY = window.scrollY
+    const onScroll = () => {
+      const y = window.scrollY
+      setScrolled(y > 40)
+      if (Math.abs(y - lastY) > 6) {
+        setHidden(y > lastY && y > 320)
+        lastY = y
+      }
+    }
     onScroll()
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
@@ -26,7 +40,12 @@ export default function Navbar() {
   }, [open])
 
   return (
-    <header className={`nav ${scrolled ? 'nav--scrolled' : ''} ${open ? 'nav--open' : ''}`}>
+    <motion.header
+      className={`nav ${scrolled ? 'nav--scrolled' : ''} ${open ? 'nav--open' : ''} ${hidden && !open ? 'nav--hidden' : ''} ${overHero ? 'nav--over-hero' : ''}`}
+      initial={{ opacity: 0, y: -24 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.9, ease, delay: INTRO_DELAY + 0.1 }}
+    >
       <div className="nav__inner">
         <Link to="/" className="nav__brand" aria-label={ui.nav.brandAria}>
           <img src={site.logo.src} alt={site.logo.alt} className="nav__logo" width="180" height="42" />
@@ -74,6 +93,6 @@ export default function Navbar() {
           ))}
         </nav>
       </div>
-    </header>
+    </motion.header>
   )
 }

@@ -5,11 +5,18 @@
   "type": "module",
   "description": "Moonlight Studio — a luxury photography studio website.",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --host",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview --host",
+    "images": "node scripts/images.mjs",
+    "predev": "npm run images",
+    "prebuild": "npm run images",
+    "deploy": "bash scripts/deploy.sh",
+    "check:prod": "bash scripts/check-prod.sh"
   },
   "dependencies": {
+    "@fontsource/cormorant-garamond": "^5.3.0",
+    "@fontsource/inter": "^5.3.0",
     "framer-motion": "^11.3.19",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -17,6 +24,7 @@
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.3.1",
+    "sharp": "^0.33.5",
     "vite": "^5.4.0"
   }
 }

@@ -10,8 +10,8 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: {
+          react: ['react', 'react-dom', 'react-router-dom'],
           motion: ['framer-motion'],
-          router: ['react-router-dom'],
         },
       },
     },

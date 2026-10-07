@@ -1,69 +1,68 @@
 import { Link } from 'react-router-dom'
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { useRef } from 'react'
-import { img } from '../data/images'
+import { imgUrl, srcSet } from '../data/images'
+import { INTRO_DELAY, ease } from '../lib/motion'
+import LineReveal from './motion/LineReveal'
 import content from '../content/pageContent'
 import './Hero.css'
 
-const ease = [0.22, 1, 0.36, 1]
 const { hero } = content
+const d = INTRO_DELAY // entrance waits for the intro preloader (0 on later visits)
 
 export default function Hero() {
   const ref = useRef(null)
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] })
-  const y = useTransform(scrollYProgress, [0, 1], ['0%', '18%'])
+  const y = useTransform(scrollYProgress, [0, 1], ['0%', '22%'])
   const scale = useTransform(scrollYProgress, [0, 1], [1, 1.12])
-  const fade = useTransform(scrollYProgress, [0, 0.8], [1, 0])
-
-  const heroId = hero.image.src
+  const fade = useTransform(scrollYProgress, [0, 0.7], [1, 0])
+  const contentY = useTransform(scrollYProgress, [0, 1], ['0%', '-30%'])
 
   return (
     <section className="hero" ref={ref} aria-label={hero.ariaLabel}>
       <motion.div className="hero__bg" style={{ y, scale }}>
-        <img
-          src={img(heroId, 1920, 1080)}
-          srcSet={`${img(heroId, 1280, 720)} 1280w, ${img(heroId, 1920, 1080)} 1920w, ${img(heroId, 2560, 1440)} 2560w`}
+        {/* Ken Burns settle on load */}
+        <motion.img
+          src={imgUrl(hero.image.src, 1920)}
+          srcSet={srcSet(hero.image.src)}
           sizes="100vw"
           alt={hero.image.alt}
           fetchPriority="high"
           decoding="async"
-          width="1920"
-          height="1080"
+          initial={{ scale: 1.18, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ scale: { duration: 2.6, ease, delay: d }, opacity: { duration: 1.2, delay: d } }}
         />
       </motion.div>
       <div className="hero__scrim" />
       <div className="hero__vignette" />
 
-      <motion.div className="hero__content" style={{ opacity: fade }}>
-        <motion.p
-          className="eyebrow hero__eyebrow"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.9, delay: 0.2, ease }}
-        >
-          {hero.eyebrow}
-        </motion.p>
+      <motion.div className="hero__content" style={{ opacity: fade, y: contentY }}>
+        {hero.eyebrow && (
+          <motion.p
+            className="eyebrow hero__eyebrow"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.9, delay: d + 0.2, ease }}
+          >
+            {hero.eyebrow}
+          </motion.p>
+        )}
 
-        <h1 className="hero__title display">
-          {hero.titleLines.map((w, i) => (
-            <span className="hero__line" key={w.text}>
-              <motion.span
-                className={w.accent ? 'hero__accent' : ''}
-                initial={{ y: '110%' }}
-                animate={{ y: 0 }}
-                transition={{ duration: 1, delay: 0.35 + i * 0.12, ease }}
-              >
-                {w.text}
-              </motion.span>
-            </span>
-          ))}
-        </h1>
+        <LineReveal
+          as="h1"
+          immediate
+          className="hero__title display"
+          delay={d + 0.35}
+          stagger={0.12}
+          lines={hero.titleLines.map((w) => (w.accent ? <em key={w.text}>{w.text}</em> : w.text))}
+        />
 
         <motion.p
           className="hero__tagline"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.9, delay: 0.8, ease }}
+          transition={{ duration: 0.9, delay: d + 0.8, ease }}
         >
           {hero.tagline}
         </motion.p>
@@ -72,7 +71,7 @@ export default function Hero() {
           className="hero__actions"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.9, delay: 0.95, ease }}
+          transition={{ duration: 0.9, delay: d + 0.95, ease }}
         >
           <Link to={hero.primaryButton.url} className="btn btn--solid">{hero.primaryButton.label}</Link>
           <Link to={hero.secondaryButton.url} className="btn">{hero.secondaryButton.label}</Link>
@@ -83,11 +82,12 @@ export default function Hero() {
         className="hero__scroll"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ duration: 1, delay: 1.3 }}
-        style={{ opacity: fade }}
+        transition={{ duration: 1, delay: d + 1.3 }}
       >
-        <span>{hero.scrollLabel}</span>
-        <span className="hero__scroll-line" />
+        <motion.span style={{ opacity: fade }} className="hero__scroll-inner">
+          <span>{hero.scrollLabel}</span>
+          <span className="hero__scroll-line" />
+        </motion.span>
       </motion.div>
     </section>
   )

@@ -1,6 +1,7 @@
 import Page from '../components/Page'
 import Media from '../components/Media'
-import Reveal from '../components/Reveal'
+import Reveal from '../components/motion/Reveal'
+import LineReveal from '../components/motion/LineReveal'
 import content from '../content/pageContent'
 import './Contact.css'
 
@@ -53,9 +54,13 @@ export default function Contact() {
       <header className="ct-head section">
         <div className="section-wide">
           <Reveal><p className="eyebrow">{header.eyebrow}</p></Reveal>
-          <Reveal as="h1" delay={0.05} className="ct-head__title display">
-            {header.title.line1}<br /><em>{header.title.emphasis}</em>
-          </Reveal>
+          <LineReveal
+            as="h1"
+            immediate
+            delay={0.25}
+            className="ct-head__title display"
+            lines={[header.title.line1, <em key="em">{header.title.emphasis}</em>]}
+          />
           <Reveal delay={0.12} className="ct-head__sub">
             {header.subtitle}
           </Reveal>
@@ -94,7 +99,7 @@ export default function Contact() {
 
         {/* Cinematic visual */}
         <Reveal delay={0.1} className="ct-visual">
-          <Media id={visual.image.src} ratio={0.82} alt={visual.image.alt} sizes="(max-width: 900px) 100vw, 42vw" width={1000} priority hoverZoom={false} />
+          <Media src={visual.image.src} ratio={0.82} alt={visual.image.alt} sizes="(max-width: 900px) 100vw, 42vw" priority hoverZoom={false} />
           <div className="ct-visual__caption">
             <span>{visual.captionLeft}</span>
             <span>{visual.captionRight}</span>
@@ -105,9 +110,7 @@ export default function Contact() {
       {/* Map / directions band */}
       <section className="section ct-cta">
         <div className="section-wide ct-cta__inner">
-          <Reveal as="h2" className="ct-cta__title display">
-            {cta.title}
-          </Reveal>
+          <LineReveal className="ct-cta__title display" lines={[cta.title]} />
           <Reveal delay={0.08}>
             <a href={`mailto:${contactInfo.email}`} className="btn btn--solid">
               {contactInfo.email}

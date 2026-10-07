@@ -1,27 +1,34 @@
 import { useCallback, useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { AnimatePresence, motion } from 'framer-motion'
-import { img } from '../data/images'
+import { imgUrl, srcSet } from '../data/images'
+import { ease } from '../lib/motion'
 import content from '../content/pageContent'
 import './Lightbox.css'
 
-const ease = [0.22, 1, 0.36, 1]
 const { lightbox } = content.ui
 
+const slide = {
+  enter: (dir) => ({ opacity: 0, x: dir * 80, scale: 0.98 }),
+  center: { opacity: 1, x: 0, scale: 1 },
+  exit: (dir) => ({ opacity: 0, x: dir * -80, scale: 0.98 }),
+}
+
 /**
- * Fullscreen gallery/lightbox for a single project. Traps focus, supports
- * keyboard navigation (arrows + escape) and locks background scroll.
+ * Fullscreen gallery/lightbox for a single project. Keyboard (arrows + escape),
+ * swipe/drag on touch, locks background scroll and preloads neighbours.
  */
 export default function Lightbox({ project, onClose }) {
-  const [i, setI] = useState(0)
+  const [[i, dir], setState] = useState([0, 1])
   const gallery = project?.gallery ?? []
   const count = gallery.length
 
-  const next = useCallback(() => setI((v) => (v + 1) % count), [count])
-  const prev = useCallback(() => setI((v) => (v - 1 + count) % count), [count])
+  const go = useCallback((step) => setState(([v]) => [(v + step + count) % count, step]), [count])
+  const next = useCallback(() => go(1), [go])
+  const prev = useCallback(() => go(-1), [go])
 
   useEffect(() => {
-    setI(0)
+    setState([0, 1])
   }, [project])
 
   useEffect(() => {
@@ -39,9 +46,20 @@ export default function Lightbox({ project, onClose }) {
     }
   }, [project, onClose, next, prev])
 
+  // Warm the cache for the next/previous image so navigation feels instant.
+  useEffect(() => {
+    if (!count) return
+    ;[1, -1].forEach((s) => {
+      const im = new Image()
+      im.src = imgUrl(gallery[(i + s + count) % count].src, 1600)
+    })
+  }, [i, count, gallery])
+
+  const current = gallery[i]
+
   return createPortal(
     <AnimatePresence>
-      {project && (
+      {project && current && (
         <motion.div
           className="lb"
           role="dialog"
@@ -54,7 +72,12 @@ export default function Lightbox({ project, onClose }) {
         >
           <div className="lb__backdrop" onClick={onClose} />
 
-          <div className="lb__bar">
+          <motion.div
+            className="lb__bar"
+            initial={{ y: -20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.6, ease, delay: 0.1 }}
+          >
             <div className="lb__info">
               <span className="lb__cat">{project.category} · {project.location}</span>
               <h2 className="lb__title display">{project.title}</h2>
@@ -64,28 +87,38 @@ export default function Lightbox({ project, onClose }) {
                 <path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
               </svg>
             </button>
-          </div>
+          </motion.div>
 
           <div className="lb__stage">
             <button className="lb__nav lb__nav--prev" onClick={prev} aria-label={lightbox.prevImage}>
               <Chevron dir="left" />
             </button>
 
-            <AnimatePresence mode="wait" initial={false}>
+            <AnimatePresence mode="popLayout" initial={false} custom={dir}>
               <motion.figure
-                key={gallery[i].src}
+                key={current.src + i}
                 className="lb__figure"
-                initial={{ opacity: 0, scale: 0.98 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.99 }}
-                transition={{ duration: 0.5, ease }}
+                custom={dir}
+                variants={slide}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                transition={{ duration: 0.55, ease }}
+                drag="x"
+                dragConstraints={{ left: 0, right: 0 }}
+                dragElastic={0.2}
+                onDragEnd={(_, info) => {
+                  if (info.offset.x < -60 || info.velocity.x < -400) next()
+                  else if (info.offset.x > 60 || info.velocity.x > 400) prev()
+                }}
               >
                 <img
-                  src={img(gallery[i].src, 1600, 1067)}
-                  srcSet={`${img(gallery[i].src, 1000, 667)} 1000w, ${img(gallery[i].src, 1600, 1067)} 1600w`}
+                  src={imgUrl(current.src, 1600)}
+                  srcSet={srcSet(current.src)}
                   sizes="90vw"
-                  alt={gallery[i].alt || `${project.title} — image ${i + 1} of ${count}`}
+                  alt={current.alt || `${project.title} — image ${i + 1} of ${count}`}
                   decoding="async"
+                  draggable={false}
                 />
               </motion.figure>
             </AnimatePresence>
@@ -95,21 +128,26 @@ export default function Lightbox({ project, onClose }) {
             </button>
           </div>
 
-          <div className="lb__foot">
+          <motion.div
+            className="lb__foot"
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.6, ease, delay: 0.15 }}
+          >
             <span className="lb__counter">{String(i + 1).padStart(2, '0')} / {String(count).padStart(2, '0')}</span>
             <div className="lb__thumbs">
               {gallery.map((g, gi) => (
                 <button
-                  key={g.src}
+                  key={g.src + gi}
                   className={`lb__thumb ${gi === i ? 'is-active' : ''}`}
-                  onClick={() => setI(gi)}
+                  onClick={() => setState([gi, gi > i ? 1 : -1])}
                   aria-label={`${lightbox.viewImagePrefix} ${gi + 1}`}
                 >
-                  <img src={img(g.src, 120, 80)} alt="" loading="lazy" />
+                  <img src={imgUrl(g.src, 480)} alt="" loading="lazy" />
                 </button>
               ))}
             </div>
-          </div>
+          </motion.div>
         </motion.div>
       )}
     </AnimatePresence>,
